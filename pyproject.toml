@@ -1,0 +1,29 @@
+[tool.pylint.'MESSAGES CONTROL']
+disable = """
+    missing-class-docstring,
+    missing-module-docstring,
+    missing-function-docstring,
+    logging-fstring-interpolation,
+    unused-import,
+"""
+max-line-length = 120
+[tool.isort]
+include_trailing_comma = true
+known_nncf = ["nncf", "optimum"]
+known_torch = ["torch", "transformers"]
+known_localfolder = ["utils"]
+line_length = 100
+multi_line_output = 3
+no_lines_before = ['nncf']
+sections = [
+  'FUTURE',
+  'STDLIB',
+  'TORCH',
+  'THIRDPARTY',
+  'FIRSTPARTY',
+  'NNCF',
+  'LOCALFOLDER',
+]
+[tool.autopep8]
+ignore = ["E402"]
+max-line-length = 120

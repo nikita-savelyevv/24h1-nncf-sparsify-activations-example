@@ -1,9 +1,9 @@
 import json
 from dataclasses import dataclass, field
 from pathlib import Path
+from unittest.mock import patch
 
 import torch
-
 import transformers
 from transformers import AutoModelForCausalLM, AutoTokenizer, HfArgumentParser, set_seed
 
@@ -19,13 +19,13 @@ from nncf import CompressWeightsMode
 from optimum.exporters.openvino.convert import export_from_model
 from optimum.intel.openvino import OVModelForCausalLM
 
-if True:
-    from utils import create_nncf_dataset, infer_layer_name, run_lm_eval
+from utils import create_nncf_dataset, infer_layer_name, run_lm_eval
 
 
 @dataclass
 class Args:
-    model_id: str = 'yujiepan/llama-2-tiny-random'  # Model should be llama or mistral or mixtral
+    # Model should be llama or mistral or mixtral
+    model_id: str = 'yujiepan/llama-2-tiny-random'
     torch_dtype: str = 'float16'  # Load the torch model in this dtype
     device: str = field(default='cpu', metadata={'choices': ['cuda', 'cpu']})
     # Whether to do compression before sparsification. Note that torch backend only supports int8.
@@ -42,7 +42,8 @@ class Args:
 
     # evaluate with lm-harness-evaluation
     eval_task: str = field(default='wikitext', metadata={
-        'choices': ['wikitext', 'arc_easy', 'arc_challenge', 'boolq', "piqa", 'lambada_openai', 'winogrande', 'sciq', 'hellaswag']
+        'choices': ['wikitext', 'arc_easy', 'arc_challenge', 'boolq', "piqa",
+                    'lambada_openai', 'winogrande', 'sciq', 'hellaswag']
     })
     eval_limit: int = None  # If set, will only evaluate on this many samples. Useful for debugging.
     save_folder: str = './openvino_ir/'
@@ -112,10 +113,13 @@ def main(args: Args):
             module.result_dtype = torch.float32
     if args.compress_weights_mode is None:
         sparse_model = sparse_model.float()
-    export_from_model(
-        sparse_model, args.save_folder, stateful=False, device=args.device,
-        compression_option='fp32',
-    )
+    # Optimum-intel will do weight compression without asking user if the model is
+    # larger than _MAX_UNCOMPRESSED_SIZE. Disable it so that we can export a float model.
+    with patch('optimum.exporters.openvino.convert._MAX_UNCOMPRESSED_SIZE', float('inf')):
+        export_from_model(
+            sparse_model, args.save_folder, stateful=False, device=args.device,
+            compression_option='fp32',
+        )
     tokenizer.save_pretrained(args.save_folder)
 
     # Try loading the IR
@@ -126,7 +130,9 @@ def main(args: Args):
 
     # Run wikitext evaluation on OV. This will take long.
     if False:
-        ov_eval_results = run_lm_eval(ov_model, tokenizer, args.model_id, 'cpu', args.eval_task, limit=args.eval_limit)
+        ov_eval_results = run_lm_eval(
+            ov_model, tokenizer, args.model_id, 'cpu', args.eval_task, limit=args.eval_limit
+        )
         with open(Path(args.save_folder, 'ov_eval_results.json'), 'w', encoding='utf-8') as f:
             json.dump(ov_eval_results, f, indent=2)
         print('OV evaluation result:', ov_eval_results)

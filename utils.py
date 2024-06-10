@@ -5,12 +5,12 @@ from pathlib import Path
 from typing import Optional, Union
 
 import torch
+from transformers import AutoTokenizer, PreTrainedModel
 
 import accelerate.hooks
 from datasets import load_dataset
 from lm_eval import evaluator
 from lm_eval.models.huggingface import AutoCausalLM, HuggingFaceAutoLM
-from transformers import AutoTokenizer, PreTrainedModel
 
 import nncf
 import nncf.experimental
@@ -81,7 +81,7 @@ def get_calibration_texts():
     """
     Sentences from c4 dataset.
     """
-    cache_path = './logs/cached_calibration_samples.txt'
+    cache_path = './cached_calibration_samples.txt'
     if Path(cache_path).exists():
         with Path(cache_path).open(encoding='utf-8') as f:
             texts = json.load(f)
