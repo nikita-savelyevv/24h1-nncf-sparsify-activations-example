@@ -1,1 +1,1 @@
-# nncf-sparsify-activations-example
+# 24h1-nncf-sparsify-activations-example
