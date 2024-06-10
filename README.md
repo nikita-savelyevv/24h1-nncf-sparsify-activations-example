@@ -1,0 +1,1 @@
+# nncf-sparsify-activations-example
