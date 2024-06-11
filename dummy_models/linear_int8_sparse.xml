@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<net name="Model0" version="11">
+<net name="Model14" version="11">
 	<layers>
 		<layer id="0" name="input" type="Parameter" version="opset1">
 			<data shape="?,?" element_type="f32" />
@@ -24,7 +24,7 @@
 				</port>
 			</output>
 		</layer>
-		<layer id="2" name="Constant_1487" type="Const" version="opset1">
+		<layer id="2" name="Constant_32938" type="Const" version="opset1">
 			<data element_type="f32" shape="1, 1" offset="0" size="4" />
 			<output>
 				<port id="0" precision="FP32">
@@ -79,11 +79,11 @@
 			</output>
 		</layer>
 		<layer id="6" name="self.weight" type="Const" version="opset1">
-			<data element_type="u8" shape="2, 4" offset="8" size="8" />
+			<data element_type="u8" shape="16, 8" offset="8" size="128" />
 			<output>
 				<port id="0" precision="U8" names="self.weight">
-					<dim>2</dim>
-					<dim>4</dim>
+					<dim>16</dim>
+					<dim>8</dim>
 				</port>
 			</output>
 		</layer>
@@ -91,22 +91,22 @@
 			<data destination_type="f16" />
 			<input>
 				<port id="0" precision="U8">
-					<dim>2</dim>
-					<dim>4</dim>
+					<dim>16</dim>
+					<dim>8</dim>
 				</port>
 			</input>
 			<output>
 				<port id="1" precision="FP16" names="21,input">
-					<dim>2</dim>
-					<dim>4</dim>
+					<dim>16</dim>
+					<dim>8</dim>
 				</port>
 			</output>
 		</layer>
 		<layer id="8" name="self._nncf.external_op.weights_decompressor_weight._zero_point" type="Const" version="opset1">
-			<data element_type="u8" shape="2, 1" offset="16" size="2" />
+			<data element_type="u8" shape="16, 1" offset="136" size="16" />
 			<output>
 				<port id="0" precision="U8" names="self._nncf.external_op.weights_decompressor_weight._zero_point">
-					<dim>2</dim>
+					<dim>16</dim>
 					<dim>1</dim>
 				</port>
 			</output>
@@ -115,13 +115,13 @@
 			<data destination_type="f16" />
 			<input>
 				<port id="0" precision="U8">
-					<dim>2</dim>
+					<dim>16</dim>
 					<dim>1</dim>
 				</port>
 			</input>
 			<output>
 				<port id="1" precision="FP16">
-					<dim>2</dim>
+					<dim>16</dim>
 					<dim>1</dim>
 				</port>
 			</output>
@@ -130,26 +130,26 @@
 			<data auto_broadcast="numpy" />
 			<input>
 				<port id="0" precision="FP16">
-					<dim>2</dim>
-					<dim>4</dim>
+					<dim>16</dim>
+					<dim>8</dim>
 				</port>
 				<port id="1" precision="FP16">
-					<dim>2</dim>
+					<dim>16</dim>
 					<dim>1</dim>
 				</port>
 			</input>
 			<output>
 				<port id="2" precision="FP16" names="22">
-					<dim>2</dim>
-					<dim>4</dim>
+					<dim>16</dim>
+					<dim>8</dim>
 				</port>
 			</output>
 		</layer>
 		<layer id="11" name="self._nncf.external_op.weights_decompressor_weight._scale" type="Const" version="opset1">
-			<data element_type="f16" shape="2, 1" offset="18" size="4" />
+			<data element_type="f16" shape="16, 1" offset="152" size="32" />
 			<output>
 				<port id="0" precision="FP16" names="self._nncf.external_op.weights_decompressor_weight._scale">
-					<dim>2</dim>
+					<dim>16</dim>
 					<dim>1</dim>
 				</port>
 			</output>
@@ -158,18 +158,18 @@
 			<data auto_broadcast="numpy" />
 			<input>
 				<port id="0" precision="FP16">
-					<dim>2</dim>
-					<dim>4</dim>
+					<dim>16</dim>
+					<dim>8</dim>
 				</port>
 				<port id="1" precision="FP16">
-					<dim>2</dim>
+					<dim>16</dim>
 					<dim>1</dim>
 				</port>
 			</input>
 			<output>
 				<port id="2" precision="FP16" names="23">
-					<dim>2</dim>
-					<dim>4</dim>
+					<dim>16</dim>
+					<dim>8</dim>
 				</port>
 			</output>
 		</layer>
@@ -177,14 +177,14 @@
 			<data destination_type="f32" />
 			<input>
 				<port id="0" precision="FP16">
-					<dim>2</dim>
-					<dim>4</dim>
+					<dim>16</dim>
+					<dim>8</dim>
 				</port>
 			</input>
 			<output>
 				<port id="1" precision="FP32" names="24">
-					<dim>2</dim>
-					<dim>4</dim>
+					<dim>16</dim>
+					<dim>8</dim>
 				</port>
 			</output>
 		</layer>
@@ -196,23 +196,23 @@
 					<dim>-1</dim>
 				</port>
 				<port id="1" precision="FP32">
-					<dim>2</dim>
-					<dim>4</dim>
+					<dim>16</dim>
+					<dim>8</dim>
 				</port>
 			</input>
 			<output>
 				<port id="2" precision="FP32">
 					<dim>-1</dim>
-					<dim>2</dim>
+					<dim>16</dim>
 				</port>
 			</output>
 		</layer>
-		<layer id="15" name="Constant_1488" type="Const" version="opset1">
-			<data element_type="f32" shape="1, 2" offset="22" size="8" />
+		<layer id="15" name="Constant_32939" type="Const" version="opset1">
+			<data element_type="f32" shape="1, 16" offset="184" size="64" />
 			<output>
 				<port id="0" precision="FP32">
 					<dim>1</dim>
-					<dim>2</dim>
+					<dim>16</dim>
 				</port>
 			</output>
 		</layer>
@@ -221,25 +221,25 @@
 			<input>
 				<port id="0" precision="FP32">
 					<dim>-1</dim>
-					<dim>2</dim>
+					<dim>16</dim>
 				</port>
 				<port id="1" precision="FP32">
 					<dim>1</dim>
-					<dim>2</dim>
+					<dim>16</dim>
 				</port>
 			</input>
 			<output>
 				<port id="2" precision="FP32">
 					<dim>-1</dim>
-					<dim>2</dim>
+					<dim>16</dim>
 				</port>
 			</output>
 		</layer>
-		<layer id="17" name="Result_49" type="Result" version="opset1">
+		<layer id="17" name="Result_31500" type="Result" version="opset1">
 			<input>
 				<port id="0" precision="FP32">
 					<dim>-1</dim>
-					<dim>2</dim>
+					<dim>16</dim>
 				</port>
 			</input>
 		</layer>

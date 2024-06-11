@@ -19,7 +19,7 @@ pip install optimum-intel==1.17.2
 
 ## Dummy models
 
-`python run_small_model.py`
+`python run_dummy_model.py`
 
 See the example IR models at `dummy_models` folder.
 
