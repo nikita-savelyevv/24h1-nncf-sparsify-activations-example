@@ -17,6 +17,12 @@ pip install transformers==4.39.3
 pip install optimum-intel==1.17.2
 ```
 
+## Dummy models
+
+`python run_small_model.py`
+
+See the example IR models at `dummy_models` folder.
+
 ## Run example to export the model
 
 See `bash.bash`. The exported models should be at `./models`
@@ -38,7 +44,3 @@ tokenizer = transformers.AutoTokenizer.from_pretrained(model_id)
 pipe = transformers.pipelines.TextGenerationPipeline(model=ov_model, tokenizer=tokenizer)
 output = pipe('Hello, I am a ', max_new_tokens=16)
 ```
-
-## Dummy models
-
-`python run_small_model.py`
