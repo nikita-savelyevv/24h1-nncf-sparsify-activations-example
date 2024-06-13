@@ -58,6 +58,8 @@ def main(args: Args):
     model = AutoModelForCausalLM.from_pretrained(
         args.model_id, torch_dtype=torch_dtype,
         device_map='auto' if args.device == 'cuda' else 'cpu',
+        # HF uses sdpa by default since torch>=2.1.1, which is not well supported by OV export.
+        attn_implementation="eager",
     )
     model = model.eval()
     tokenizer = AutoTokenizer.from_pretrained(args.model_id)

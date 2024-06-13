@@ -2,7 +2,7 @@
 
 ## Setup
 
-**Note: I tested on torch==2.1.0. Some higher version (e.g. 2.3.1) might have issues with ov export.**
+**Note: I tested on torch==2.1.0. Some higher version (e.g. 2.3.1) might have issues with ov export if the torch model is on cuda. (update: this issue is solved. Can use the latest torch now)**
 
 ```bash
 # install nncf
