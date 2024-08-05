@@ -4,6 +4,7 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Optional, Union
 
+import numpy as np
 import torch
 from transformers import AutoTokenizer, PreTrainedModel
 
@@ -104,7 +105,7 @@ def get_calibration_texts():
     return texts
 
 
-def create_nncf_dataset(model, tokenizer, device: str, batch_size: int, num_calibration_samples: int):
+def create_nncf_dataset_pt(tokenizer, device: str, batch_size: int, num_calibration_samples: int):
     all_texts = get_calibration_texts()
     batches = [all_texts[i:i + batch_size] for i in range(0, num_calibration_samples, batch_size)]
 
@@ -119,6 +120,55 @@ def create_nncf_dataset(model, tokenizer, device: str, batch_size: int, num_cali
 
     nncf_dataset = nncf.Dataset(batches, transform_func)
     return nncf_dataset
+
+
+def create_nncf_dataset_ov(tokenizer, batch_size: int, num_calibration_samples: int, input_shapes: dict):
+    all_texts = get_calibration_texts()
+    batches = [all_texts[i:i + batch_size] for i in range(0, num_calibration_samples, batch_size)]
+
+    def transform_func(batch):
+        tokenized_text = tokenizer(
+            batch, truncation=True, return_tensors='np', max_length=256, padding=False,
+        )
+        input_ids = tokenized_text["input_ids"][:, :256]
+        attention_mask = tokenized_text["attention_mask"][:, :256]
+
+        inputs = {}
+        inputs["input_ids"] = input_ids
+
+        if "attention_mask" in input_shapes:
+            inputs["attention_mask"] = tokenized_text["attention_mask"]
+
+        if "position_ids" in input_shapes:
+            position_ids = np.cumsum(attention_mask, axis=1) - 1
+            position_ids[attention_mask == 0] = 1
+            inputs["position_ids"] = position_ids
+
+        batch_size = input_ids.shape[0]
+
+        if "beam_idx" in input_shapes:
+            inputs["beam_idx"] = np.arange(batch_size, dtype=int)
+
+        for name, shape in input_shapes.items():
+            if name in inputs:
+                continue
+            inputs[name] = np.zeros(shape)
+
+        return inputs
+
+    nncf_dataset = nncf.Dataset(batches, transform_func)
+    return nncf_dataset
+
+
+def get_ov_input_shapes(model, batch_size=1):
+    inputs = {}
+    for val in model.inputs:
+        name = val.any_name
+        shape = list(val.partial_shape.get_min_shape())
+        shape[0] = batch_size
+        inputs[name] = shape
+
+    return inputs
 
 
 def infer_layer_name(model_id, layer_type: str):
