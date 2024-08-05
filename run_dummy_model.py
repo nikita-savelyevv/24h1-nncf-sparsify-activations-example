@@ -29,6 +29,19 @@ class ThreeLinearModel(nn.Module):
         return y0, y1
 
 
+class MatMulModel(nn.Module):
+    def __init__(self) -> None:
+        super().__init__()
+        self.linear1 = nn.Linear(8, 16)
+        self.linear2 = nn.Linear(8, 16)
+
+    def forward(self, x: torch.Tensor):
+        y1 = self.linear1(x)
+        y2 = self.linear2(x)
+        y3 = torch.matmul(y1, y2.T)
+        return y3
+
+
 def dummy_llama_model():
     config = transformers.models.llama.configuration_llama.LlamaConfig(
         vocab_size=32,
@@ -57,6 +70,15 @@ model_list = [
     ModelDesc(
         name="linear",
         model_getter=lambda: nn.Linear(8, 16),
+        dataset_getter=lambda: nncf.Dataset(torch.randn([3, 2, 8])),
+        target_sparsity_by_scope={
+            "{re}.*linear.*": 0.3,
+        },
+        ignored_scope=None,
+    ),
+    ModelDesc(
+        name="matmul",
+        model_getter=MatMulModel,
         dataset_getter=lambda: nncf.Dataset(torch.randn([3, 2, 8])),
         target_sparsity_by_scope={
             "{re}.*linear.*": 0.3,
@@ -96,12 +118,12 @@ def export_sparse_ir(desc: ModelDesc, compress_weights: bool):
             mode=nncf.CompressWeightsMode.INT8_ASYM,
             dataset=dataset,
         )
-    model = nncf.experimental.torch.sparsify_activations.sparsify_activations(
-        model=model,
-        dataset=dataset,
-        target_sparsity_by_scope=desc.target_sparsity_by_scope,
-        ignored_scope=desc.ignored_scope,
-    )
+    # model = nncf.experimental.torch.sparsify_activations.sparsify_activations(
+    #     model=model,
+    #     dataset=dataset,
+    #     target_sparsity_by_scope=desc.target_sparsity_by_scope,
+    #     ignored_scope=desc.ignored_scope,
+    # )
     example_input = next(iter(dataset.get_inference_data()))
     ov_model = ov.convert_model(model, example_input=example_input)
     compiled_model = ov.compile_model(ov_model, "CPU", config={ov.properties.hint.inference_precision: "f32"})
