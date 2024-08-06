@@ -131,14 +131,14 @@ def infer_layer_name(model_id, layer_type: str):
     else:
         author, model_id = '', model_id
     if 'llama' in model_id or 'mistral' in model_id:
-        return f'{{re}}.*{layer_type}_proj.*'
+        return f'.*{layer_type}_proj.*'
     elif 'mixtral' in model_id:
         if layer_type == 'up':
-            return '{re}.*experts.*w3'
+            return '.*experts.*w3'
         if layer_type == 'gate':
-            return '{re}.*experts.*w1'
+            return '.*experts.*w1'
         if layer_type == 'down':
-            return '{re}.*experts.*w2'
+            return '.*experts.*w2'
     raise NotImplementedError
 
 

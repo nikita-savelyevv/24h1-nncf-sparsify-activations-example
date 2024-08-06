@@ -19,6 +19,7 @@ from nncf import CompressWeightsMode
 from optimum.exporters.openvino.convert import export_from_model
 from optimum.intel.openvino import OVModelForCausalLM
 
+from nncf.experimental.torch.sparsify_activations import TargetScope
 from utils import create_nncf_dataset, infer_layer_name, run_lm_eval
 
 
@@ -85,11 +86,11 @@ def main(args: Args):
     set_seed(42)
     target_sparsity_by_scope = {}
     if args.up is not None:
-        target_sparsity_by_scope[infer_layer_name(args.model_id, 'up')] = args.up
+        target_sparsity_by_scope[TargetScope(patterns=[infer_layer_name(args.model_id, 'up')])] = args.up
     if args.gate is not None:
-        target_sparsity_by_scope[infer_layer_name(args.model_id, 'gate')] = args.gate
+        target_sparsity_by_scope[TargetScope(patterns=[infer_layer_name(args.model_id, 'gate')])] = args.gate
     if args.down is not None:
-        target_sparsity_by_scope[infer_layer_name(args.model_id, 'down')] = args.down
+        target_sparsity_by_scope[TargetScope(patterns=[infer_layer_name(args.model_id, 'down')])] = args.down
     print('target_sparsity_by_scope:', target_sparsity_by_scope)
     sparse_model = nncf.experimental.torch.sparsify_activations.sparsify_activations(
         model, nncf_dataset,
@@ -111,7 +112,8 @@ def main(args: Args):
     # This is a bit tricky here. We ensure the inference precision is in FP32 otherwise we will get errors
     # when exporting to IR.
     for module in sparse_model.nncf.modules():
-        if isinstance(module, nncf.torch.quantization.layers.WeightsDecompressor):
+        if isinstance(module, nncf.torch.quantization.layers.AsymmetricWeightsDecompressor) or \
+           isinstance(module, nncf.torch.quantization.layers.SymmetricWeightsDecompressor):
             module.result_dtype = torch.float32
     if args.compress_weights_mode is None:
         sparse_model = sparse_model.float()
