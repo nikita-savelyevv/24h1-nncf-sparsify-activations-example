@@ -61,16 +61,17 @@ def dummy_llama_model():
 class ModelDesc:
     name: str
     model_getter: Callable[[], nn.Module]
-    dataset_getter: Callable[[torch.device], nncf.Dataset]
+    dataset: nncf.Dataset
     target_sparsity_by_scope: Dict[TargetScope, float]
     ignored_scope: Optional[nncf.IgnoredScope]
 
 
+torch.manual_seed(0)
 model_list = [
     ModelDesc(
         name="linear",
         model_getter=lambda: nn.Linear(8, 16),
-        dataset_getter=lambda: nncf.Dataset(torch.randn([3, 2, 8])),
+        dataset=nncf.Dataset(torch.randn([3, 2, 8])),
         target_sparsity_by_scope={
             TargetScope(patterns=[".*linear.*"]): 0.3,
         },
@@ -79,7 +80,7 @@ model_list = [
     ModelDesc(
         name="matmul",
         model_getter=MatMulModel,
-        dataset_getter=lambda: nncf.Dataset(torch.randn([3, 2, 8])),
+        dataset=nncf.Dataset(torch.randn([3, 2, 8])),
         target_sparsity_by_scope={
             TargetScope(patterns=[".*linear.*"]): 0.3,
         },
@@ -88,7 +89,7 @@ model_list = [
     ModelDesc(
         name="three_linear",
         model_getter=ThreeLinearModel,
-        dataset_getter=lambda: nncf.Dataset(torch.randint(0, 30, (3, 2, 8))),
+        dataset=nncf.Dataset(torch.randint(0, 30, (3, 2, 8))),
         target_sparsity_by_scope={
             TargetScope(patterns=[".*linear.*"]): 0.4,
         },
@@ -97,7 +98,7 @@ model_list = [
     ModelDesc(
         name="dummy_llama",
         model_getter=dummy_llama_model,
-        dataset_getter=lambda: nncf.Dataset(torch.randint(0, 30, (3, 2, 8))),
+        dataset=nncf.Dataset(torch.randint(0, 30, (3, 2, 8))),
         target_sparsity_by_scope={
             TargetScope(patterns=[".*gate_proj.*"]): 0.2,
             TargetScope(patterns=[".*up_proj.*"]): 0.3,
@@ -112,7 +113,7 @@ def export_sparse_ir(desc: ModelDesc, ov_backend: bool, compression_bits: Option
     assert compression_bits in [None, 4, 8]
     assert ov_backend or compression_bits != 4
     model = desc.model_getter().eval()
-    dataset = desc.dataset_getter()
+    dataset = desc.dataset
     example_input = next(iter(dataset.get_inference_data()))
     if ov_backend:
         model = ov.convert_model(model, example_input=example_input)

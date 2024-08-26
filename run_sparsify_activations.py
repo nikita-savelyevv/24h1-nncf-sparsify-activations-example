@@ -95,17 +95,19 @@ def main(args: Args):
                 dataset=nncf_dataset,
             )
     else:
-        quantization_config = {}
-        if "int4" in args.compress_weights_mode:
-            quantization_config["bits"] = 4
-            if "sym" in args.compress_weights_mode:
-                quantization_config["group_size"] = 128
-        else:
-            quantization_config["bits"] = 8
-        if "asym" in args.compress_weights_mode:
-            quantization_config["sym"] = False
-        elif "sym" in args.compress_weights_mode:
-            quantization_config["sym"] = True
+        quantization_config = None
+        if args.compress_weights_mode is not None:
+            quantization_config = {}
+            if "int4" in args.compress_weights_mode:
+                quantization_config["bits"] = 4
+                if "sym" in args.compress_weights_mode:
+                    quantization_config["group_size"] = 128
+            else:
+                quantization_config["bits"] = 8
+            if "asym" in args.compress_weights_mode:
+                quantization_config["sym"] = False
+            elif "sym" in args.compress_weights_mode:
+                quantization_config["sym"] = True
         model_fn = lambda: OVModelForCausalLM.from_pretrained(
             args.model_id,
             export=True,
