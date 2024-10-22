@@ -20,5 +20,5 @@ python run_sparsify_activations.py \
 --torch_dtype float32 --backend ov --device cpu \
 --compress_weights_mode int8_asym \
 --up 0.32 --gate 0.32 --down 0.52 \
---save_folder ./models/tiny-llama_int8-asym_sparse
+--save_folder ./models/llama2-7b_int8-asym_sparse
 ```
