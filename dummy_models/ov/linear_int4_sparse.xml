@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<net name="Model14" version="11">
+<net name="Model7" version="11">
 	<layers>
 		<layer id="0" name="input" type="Parameter" version="opset1">
 			<data shape="?,?" element_type="f32" />
@@ -10,7 +10,7 @@
 				</port>
 			</output>
 		</layer>
-		<layer id="1" name="linear_0/aten::abs/Abs" type="Abs" version="opset1">
+		<layer id="1" name="Abs_14271" type="Abs" version="opset1">
 			<input>
 				<port id="0" precision="FP32">
 					<dim>-1</dim>
@@ -18,13 +18,13 @@
 				</port>
 			</input>
 			<output>
-				<port id="1" precision="FP32" names="27">
+				<port id="1" precision="FP32">
 					<dim>-1</dim>
 					<dim>-1</dim>
 				</port>
 			</output>
 		</layer>
-		<layer id="2" name="Constant_32938" type="Const" version="opset1">
+		<layer id="2" name="MatMul_8874/sparsity_threshold" type="Const" version="opset1">
 			<data element_type="f32" shape="1, 1" offset="0" size="4" />
 			<output>
 				<port id="0" precision="FP32">
@@ -33,7 +33,7 @@
 				</port>
 			</output>
 		</layer>
-		<layer id="3" name="linear_0/aten::le/LessEqual" type="LessEqual" version="opset1">
+		<layer id="3" name="LessEqual_14272" type="LessEqual" version="opset1">
 			<data auto_broadcast="numpy" />
 			<input>
 				<port id="0" precision="FP32">
@@ -46,19 +46,19 @@
 				</port>
 			</input>
 			<output>
-				<port id="2" precision="BOOL" names="28">
+				<port id="2" precision="BOOL">
 					<dim>-1</dim>
 					<dim>-1</dim>
 				</port>
 			</output>
 		</layer>
-		<layer id="4" name="linear_0/aten::masked_fill/ConvertLike" type="Const" version="opset1">
+		<layer id="4" name="Constant_14270" type="Const" version="opset1">
 			<data element_type="f32" shape="" offset="4" size="4" />
 			<output>
 				<port id="0" precision="FP32" />
 			</output>
 		</layer>
-		<layer id="5" name="linear_0/aten::masked_fill/Select" type="Select" version="opset1">
+		<layer id="5" name="MatMul_8874/sparse_input" type="Select" version="opset1">
 			<data auto_broadcast="numpy" />
 			<input>
 				<port id="0" precision="BOOL">
@@ -72,7 +72,7 @@
 				</port>
 			</input>
 			<output>
-				<port id="3" precision="FP32" names="29">
+				<port id="3" precision="FP32">
 					<dim>-1</dim>
 					<dim>-1</dim>
 				</port>
@@ -81,13 +81,13 @@
 		<layer id="6" name="self.weight" type="Const" version="opset1">
 			<data element_type="u8" shape="16, 8" offset="8" size="128" />
 			<output>
-				<port id="0" precision="U8" names="self.weight">
+				<port id="0" precision="U8">
 					<dim>16</dim>
 					<dim>8</dim>
 				</port>
 			</output>
 		</layer>
-		<layer id="7" name="__module._nncf.external_op.weights_decompressor_weight/aten::to/Convert" type="Convert" version="opset1">
+		<layer id="7" name="Convert_10662" type="Convert" version="opset1">
 			<data destination_type="f16" />
 			<input>
 				<port id="0" precision="U8">
@@ -96,22 +96,22 @@
 				</port>
 			</input>
 			<output>
-				<port id="1" precision="FP16" names="21,input">
+				<port id="1" precision="FP16">
 					<dim>16</dim>
 					<dim>8</dim>
 				</port>
 			</output>
 		</layer>
-		<layer id="8" name="self._nncf.external_op.weights_decompressor_weight._zero_point" type="Const" version="opset1">
+		<layer id="8" name="self.weight/zero_point" type="Const" version="opset1">
 			<data element_type="u8" shape="16, 1" offset="136" size="16" />
 			<output>
-				<port id="0" precision="U8" names="self._nncf.external_op.weights_decompressor_weight._zero_point">
+				<port id="0" precision="U8">
 					<dim>16</dim>
 					<dim>1</dim>
 				</port>
 			</output>
 		</layer>
-		<layer id="9" name="__module._nncf.external_op.weights_decompressor_weight/aten::sub/Convert" type="Convert" version="opset1">
+		<layer id="9" name="Convert_10665" type="Convert" version="opset1">
 			<data destination_type="f16" />
 			<input>
 				<port id="0" precision="U8">
@@ -126,7 +126,7 @@
 				</port>
 			</output>
 		</layer>
-		<layer id="10" name="__module._nncf.external_op.weights_decompressor_weight/aten::sub/Subtract" type="Subtract" version="opset1">
+		<layer id="10" name="self.weight/zero_point/subtract" type="Subtract" version="opset1">
 			<data auto_broadcast="numpy" />
 			<input>
 				<port id="0" precision="FP16">
@@ -139,22 +139,22 @@
 				</port>
 			</input>
 			<output>
-				<port id="2" precision="FP16" names="22">
+				<port id="2" precision="FP16">
 					<dim>16</dim>
 					<dim>8</dim>
 				</port>
 			</output>
 		</layer>
-		<layer id="11" name="self._nncf.external_op.weights_decompressor_weight._scale" type="Const" version="opset1">
+		<layer id="11" name="self.weight/scale" type="Const" version="opset1">
 			<data element_type="f16" shape="16, 1" offset="152" size="32" />
 			<output>
-				<port id="0" precision="FP16" names="self._nncf.external_op.weights_decompressor_weight._scale">
+				<port id="0" precision="FP16">
 					<dim>16</dim>
 					<dim>1</dim>
 				</port>
 			</output>
 		</layer>
-		<layer id="12" name="__module._nncf.external_op.weights_decompressor_weight/aten::mul/Multiply" type="Multiply" version="opset1">
+		<layer id="12" name="self.weight/fq_weights_1" type="Multiply" version="opset1">
 			<data auto_broadcast="numpy" />
 			<input>
 				<port id="0" precision="FP16">
@@ -167,13 +167,13 @@
 				</port>
 			</input>
 			<output>
-				<port id="2" precision="FP16" names="23">
+				<port id="2" precision="FP16">
 					<dim>16</dim>
 					<dim>8</dim>
 				</port>
 			</output>
 		</layer>
-		<layer id="13" name="__module._nncf.external_op.weights_decompressor_weight/aten::to/Convert_1" type="Convert" version="opset1">
+		<layer id="13" name="self.weight/fq_weights_1/convert" type="Convert" version="opset1">
 			<data destination_type="f32" />
 			<input>
 				<port id="0" precision="FP16">
@@ -182,7 +182,7 @@
 				</port>
 			</input>
 			<output>
-				<port id="1" precision="FP32" names="24">
+				<port id="1" precision="FP32">
 					<dim>16</dim>
 					<dim>8</dim>
 				</port>
@@ -207,7 +207,7 @@
 				</port>
 			</output>
 		</layer>
-		<layer id="15" name="Constant_32939" type="Const" version="opset1">
+		<layer id="15" name="Constant_10547" type="Const" version="opset1">
 			<data element_type="f32" shape="1, 16" offset="184" size="64" />
 			<output>
 				<port id="0" precision="FP32">
@@ -235,7 +235,7 @@
 				</port>
 			</output>
 		</layer>
-		<layer id="17" name="Result_31500" type="Result" version="opset1">
+		<layer id="17" name="Result_8876" type="Result" version="opset1">
 			<input>
 				<port id="0" precision="FP32">
 					<dim>-1</dim>
@@ -265,10 +265,24 @@
 		<edge from-layer="16" from-port="2" to-layer="17" to-port="0" />
 	</edges>
 	<rt_info>
-		<Runtime_version value="2024.1.0-15008-f4afc983258-releases/2024/1" />
+		<Runtime_version value="2024.3.0-16041-1e3b88e4e3f-releases/2024/3" />
 		<conversion_parameters>
 			<framework value="pytorch" />
 			<is_python_object value="True" />
 		</conversion_parameters>
+		<nncf>
+			<friendly_names_were_updated value="True" />
+			<weight_compression>
+				<all_layers value="False" />
+				<awq value="False" />
+				<gptq value="False" />
+				<group_size value="1" />
+				<ignored_scope value="[]" />
+				<mode value="int4_asym" />
+				<ratio value="1" />
+				<scale_estimation value="False" />
+				<sensitivity_metric value="weight_quantization_error" />
+			</weight_compression>
+		</nncf>
 	</rt_info>
 </net>

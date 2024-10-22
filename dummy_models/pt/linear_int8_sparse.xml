@@ -1,0 +1,274 @@
+<?xml version="1.0"?>
+<net name="Model25" version="11">
+	<layers>
+		<layer id="0" name="input" type="Parameter" version="opset1">
+			<data shape="?,?" element_type="f32" />
+			<output>
+				<port id="0" precision="FP32" names="input">
+					<dim>-1</dim>
+					<dim>-1</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="1" name="linear_0/aten::abs/Abs" type="Abs" version="opset1">
+			<input>
+				<port id="0" precision="FP32">
+					<dim>-1</dim>
+					<dim>-1</dim>
+				</port>
+			</input>
+			<output>
+				<port id="1" precision="FP32" names="27">
+					<dim>-1</dim>
+					<dim>-1</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="2" name="self._nncf.external_op.activations_sparsifier_Linear/linear_0.threshold" type="Const" version="opset1">
+			<data element_type="f32" shape="1, 1" offset="0" size="4" />
+			<output>
+				<port id="0" precision="FP32" names="self._nncf.external_op.activations_sparsifier_Linear/linear_0.threshold">
+					<dim>1</dim>
+					<dim>1</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="3" name="linear_0/aten::le/LessEqual" type="LessEqual" version="opset1">
+			<data auto_broadcast="numpy" />
+			<input>
+				<port id="0" precision="FP32">
+					<dim>-1</dim>
+					<dim>-1</dim>
+				</port>
+				<port id="1" precision="FP32">
+					<dim>1</dim>
+					<dim>1</dim>
+				</port>
+			</input>
+			<output>
+				<port id="2" precision="BOOL" names="28">
+					<dim>-1</dim>
+					<dim>-1</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="4" name="linear_0/aten::masked_fill/ConvertLike" type="Const" version="opset1">
+			<data element_type="f32" shape="" offset="4" size="4" />
+			<output>
+				<port id="0" precision="FP32" />
+			</output>
+		</layer>
+		<layer id="5" name="linear_0/aten::masked_fill/Select" type="Select" version="opset1">
+			<data auto_broadcast="numpy" />
+			<input>
+				<port id="0" precision="BOOL">
+					<dim>-1</dim>
+					<dim>-1</dim>
+				</port>
+				<port id="1" precision="FP32" />
+				<port id="2" precision="FP32">
+					<dim>-1</dim>
+					<dim>-1</dim>
+				</port>
+			</input>
+			<output>
+				<port id="3" precision="FP32" names="29">
+					<dim>-1</dim>
+					<dim>-1</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="6" name="self.weight" type="Const" version="opset1">
+			<data element_type="u8" shape="16, 8" offset="8" size="128" />
+			<output>
+				<port id="0" precision="U8" names="self.weight">
+					<dim>16</dim>
+					<dim>8</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="7" name="__module._nncf.external_op.weights_decompressor_weight/aten::to/Convert" type="Convert" version="opset1">
+			<data destination_type="f16" />
+			<input>
+				<port id="0" precision="U8">
+					<dim>16</dim>
+					<dim>8</dim>
+				</port>
+			</input>
+			<output>
+				<port id="1" precision="FP16" names="21,input">
+					<dim>16</dim>
+					<dim>8</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="8" name="self._nncf.external_op.weights_decompressor_weight._zero_point" type="Const" version="opset1">
+			<data element_type="u8" shape="16, 1" offset="136" size="16" />
+			<output>
+				<port id="0" precision="U8" names="self._nncf.external_op.weights_decompressor_weight._zero_point">
+					<dim>16</dim>
+					<dim>1</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="9" name="__module._nncf.external_op.weights_decompressor_weight/aten::sub/Convert" type="Convert" version="opset1">
+			<data destination_type="f16" />
+			<input>
+				<port id="0" precision="U8">
+					<dim>16</dim>
+					<dim>1</dim>
+				</port>
+			</input>
+			<output>
+				<port id="1" precision="FP16">
+					<dim>16</dim>
+					<dim>1</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="10" name="__module._nncf.external_op.weights_decompressor_weight/aten::sub/Subtract" type="Subtract" version="opset1">
+			<data auto_broadcast="numpy" />
+			<input>
+				<port id="0" precision="FP16">
+					<dim>16</dim>
+					<dim>8</dim>
+				</port>
+				<port id="1" precision="FP16">
+					<dim>16</dim>
+					<dim>1</dim>
+				</port>
+			</input>
+			<output>
+				<port id="2" precision="FP16" names="22">
+					<dim>16</dim>
+					<dim>8</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="11" name="self._nncf.external_op.weights_decompressor_weight._scale" type="Const" version="opset1">
+			<data element_type="f16" shape="16, 1" offset="152" size="32" />
+			<output>
+				<port id="0" precision="FP16" names="self._nncf.external_op.weights_decompressor_weight._scale">
+					<dim>16</dim>
+					<dim>1</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="12" name="__module._nncf.external_op.weights_decompressor_weight/aten::mul/Multiply" type="Multiply" version="opset1">
+			<data auto_broadcast="numpy" />
+			<input>
+				<port id="0" precision="FP16">
+					<dim>16</dim>
+					<dim>8</dim>
+				</port>
+				<port id="1" precision="FP16">
+					<dim>16</dim>
+					<dim>1</dim>
+				</port>
+			</input>
+			<output>
+				<port id="2" precision="FP16" names="23">
+					<dim>16</dim>
+					<dim>8</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="13" name="__module._nncf.external_op.weights_decompressor_weight/aten::to/Convert_1" type="Convert" version="opset1">
+			<data destination_type="f32" />
+			<input>
+				<port id="0" precision="FP16">
+					<dim>16</dim>
+					<dim>8</dim>
+				</port>
+			</input>
+			<output>
+				<port id="1" precision="FP32" names="24">
+					<dim>16</dim>
+					<dim>8</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="14" name="aten::linear/MatMul" type="MatMul" version="opset1">
+			<data transpose_a="false" transpose_b="true" />
+			<input>
+				<port id="0" precision="FP32">
+					<dim>-1</dim>
+					<dim>-1</dim>
+				</port>
+				<port id="1" precision="FP32">
+					<dim>16</dim>
+					<dim>8</dim>
+				</port>
+			</input>
+			<output>
+				<port id="2" precision="FP32">
+					<dim>-1</dim>
+					<dim>16</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="15" name="Constant_33995" type="Const" version="opset1">
+			<data element_type="f32" shape="1, 16" offset="184" size="64" />
+			<output>
+				<port id="0" precision="FP32">
+					<dim>1</dim>
+					<dim>16</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="16" name="aten::linear/Add" type="Add" version="opset1">
+			<data auto_broadcast="numpy" />
+			<input>
+				<port id="0" precision="FP32">
+					<dim>-1</dim>
+					<dim>16</dim>
+				</port>
+				<port id="1" precision="FP32">
+					<dim>1</dim>
+					<dim>16</dim>
+				</port>
+			</input>
+			<output>
+				<port id="2" precision="FP32">
+					<dim>-1</dim>
+					<dim>16</dim>
+				</port>
+			</output>
+		</layer>
+		<layer id="17" name="Result_32282" type="Result" version="opset1">
+			<input>
+				<port id="0" precision="FP32">
+					<dim>-1</dim>
+					<dim>16</dim>
+				</port>
+			</input>
+		</layer>
+	</layers>
+	<edges>
+		<edge from-layer="0" from-port="0" to-layer="5" to-port="2" />
+		<edge from-layer="0" from-port="0" to-layer="1" to-port="0" />
+		<edge from-layer="1" from-port="1" to-layer="3" to-port="0" />
+		<edge from-layer="2" from-port="0" to-layer="3" to-port="1" />
+		<edge from-layer="3" from-port="2" to-layer="5" to-port="0" />
+		<edge from-layer="4" from-port="0" to-layer="5" to-port="1" />
+		<edge from-layer="5" from-port="3" to-layer="14" to-port="0" />
+		<edge from-layer="6" from-port="0" to-layer="7" to-port="0" />
+		<edge from-layer="7" from-port="1" to-layer="10" to-port="0" />
+		<edge from-layer="8" from-port="0" to-layer="9" to-port="0" />
+		<edge from-layer="9" from-port="1" to-layer="10" to-port="1" />
+		<edge from-layer="10" from-port="2" to-layer="12" to-port="0" />
+		<edge from-layer="11" from-port="0" to-layer="12" to-port="1" />
+		<edge from-layer="12" from-port="2" to-layer="13" to-port="0" />
+		<edge from-layer="13" from-port="1" to-layer="14" to-port="1" />
+		<edge from-layer="14" from-port="2" to-layer="16" to-port="0" />
+		<edge from-layer="15" from-port="0" to-layer="16" to-port="1" />
+		<edge from-layer="16" from-port="2" to-layer="17" to-port="0" />
+	</edges>
+	<rt_info>
+		<Runtime_version value="2024.3.0-16041-1e3b88e4e3f-releases/2024/3" />
+		<conversion_parameters>
+			<framework value="pytorch" />
+			<is_python_object value="True" />
+		</conversion_parameters>
+	</rt_info>
+</net>
