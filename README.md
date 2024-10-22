@@ -5,7 +5,9 @@
 Python 3.9+ is required.
 
 ```bash
-pip install git+https://github.com/nikita-savelyevv/nncf.git@activation-sparsity-ov-backend
+git clone https://github.com/nikita-savelyevv/nncf.git
+cd nncf && git checkout activation-sparsity-ov-backend && cd ..
+pip install -e nncf
 pip install -r requirements.txt
 
 ```
@@ -14,7 +16,7 @@ pip install -r requirements.txt
 Example command:
 ```bash
 python run_sparsify_activations.py \
---model_id TinyLlama/TinyLlama-1.1B-Chat-v1.0 \
+--model_id meta-llama/Llama-2-7b-hf \
 --torch_dtype float32 --backend ov --device cpu \
 --compress_weights_mode int8_asym \
 --up 0.32 --gate 0.32 --down 0.52 \
