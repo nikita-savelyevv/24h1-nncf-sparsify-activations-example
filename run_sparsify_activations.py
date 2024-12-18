@@ -40,6 +40,8 @@ class Args:
         'int4',
     ]})
 
+    ratio: float = None  # If set, will compress the model to this ratio.
+
     # Target sparsity for up/gate/down projectors in FFN. Values should be in [0, 1]
     up: float = None
     gate: float = None
@@ -108,6 +110,8 @@ def main(args: Args):
                 quantization_config["sym"] = False
             elif "sym" in args.compress_weights_mode:
                 quantization_config["sym"] = True
+            if args.ratio is not None:
+                quantization_config["ratio"] = args.ratio
         model_fn = lambda: OVModelForCausalLM.from_pretrained(
             args.model_id,
             export=True,
@@ -140,12 +144,16 @@ def main(args: Args):
         target_sparsity_by_scope[TargetScope(patterns=[infer_layer_name(args.model_id, 'gate')])] = args.gate
     if args.down is not None:
         target_sparsity_by_scope[TargetScope(patterns=[infer_layer_name(args.model_id, 'down')])] = args.down
-    print('target_sparsity_by_scope:', target_sparsity_by_scope)
-    sparse_model = nncf.experimental.torch.sparsify_activations.sparsify_activations(
-        model, nncf_dataset,
-        target_sparsity_by_scope=target_sparsity_by_scope,
-        ignored_scope=None,
-    )
+    if args.up or args.gate or args.down:
+        print('target_sparsity_by_scope:', target_sparsity_by_scope)
+        sparse_model = nncf.experimental.torch.sparsify_activations.sparsify_activations(
+            model, nncf_dataset,
+            target_sparsity_by_scope=target_sparsity_by_scope,
+            ignored_scope=None,
+        )
+    else:
+        sparse_model = model
+        print("No sparsification target sparsity is set. Skipping sparsification.")
 
     if args.backend == 'pt':
         print(sparse_model)
@@ -175,9 +183,9 @@ def main(args: Args):
                 sparse_model, save_path, stateful=False, device=args.device,
                 compression_option='fp32',
             )
-        tokenizer.save_pretrained(save_path)
     else:
         ov.save_model(sparse_model, save_path / "openvino_model.xml")
+    tokenizer.save_pretrained(save_path)
 
     # Try loading the IR
     ov_model = OVModelForCausalLM.from_pretrained(save_path)
